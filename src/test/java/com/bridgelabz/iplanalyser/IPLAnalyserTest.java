@@ -51,6 +51,12 @@ public class IPLAnalyserTest
     @Test
     public void getDataTest_sortedByStrikeRateAndAverage() {
     	Batsman []sortedByStrikeRateAndAverage = LoaderClass.readSortedByStrikeRateAndAverage("MostRuns.csv",Batsman.class);
-//    	assertEquals("Andre Russell", sortedByStrikeRateAndAverage[0].getName());
+    	assertEquals("Ishant Sharma", sortedByStrikeRateAndAverage[0].getName());
+    }
+    
+    @Test
+    public void getDataTest_sortedByMaxRunsAndAverage() {
+    	Batsman []sortedByMaxRunsAndAverage = LoaderClass.readSortedByMaxRunsAndAverage("MostRuns.csv",Batsman.class);
+    	assertEquals("David Warner", sortedByMaxRunsAndAverage[0].getName());
     }
 }
