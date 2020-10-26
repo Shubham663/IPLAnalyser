@@ -29,4 +29,10 @@ public class IPLAnalyserTest
     	Batsman []sortedByAvg = LoaderClass.readSortedByAvg("MostRuns.csv",Batsman.class);
     	assertEquals("MS Dhoni", sortedByAvg[0].getName());
     }
+    
+    @Test
+    public void getDataTest_sortedByStrikeRate() {
+    	Batsman []sortedByStrikeRate = LoaderClass.readSortedByStrikeRate("MostRuns.csv",Batsman.class);
+    	assertEquals("Ishant Sharma", sortedByStrikeRate[0].getName());
+    }
 }
