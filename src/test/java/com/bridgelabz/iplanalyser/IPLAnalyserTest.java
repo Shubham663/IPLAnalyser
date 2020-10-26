@@ -65,4 +65,10 @@ public class IPLAnalyserTest
     	Bowler []sortedByBowlerAverage = LoaderClass.readSortedByBowlerAverage("MostRuns.csv",Bowler.class);
     	assertEquals("Harpreet Brar", sortedByBowlerAverage[0].getName());
     }
+    
+    @Test
+    public void getDataTest_sortedByStrikingRateBowler() {
+    	Bowler []sortedByBowlerStrikingRate = LoaderClass.readSortedByBowlerStrikingRate("MostRuns.csv",Bowler.class);
+    	assertEquals("Bhuvneshwar Kumar", sortedByBowlerStrikingRate[0].getName());
+    }
 }
