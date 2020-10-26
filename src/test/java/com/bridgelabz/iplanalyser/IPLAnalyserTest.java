@@ -26,6 +26,7 @@ public class IPLAnalyserTest
     
     @Test
     public void getDataTest_sortedByBattingAverage() {
-    	LoaderClass.readSortedByAvg();
+    	Batsman []sortedByAvg = LoaderClass.readSortedByAvg("MostRuns.csv",Batsman.class);
+    	assertEquals("MS Dhoni", sortedByAvg[0].getName());
     }
 }
