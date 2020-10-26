@@ -269,5 +269,28 @@ public class LoaderClass {
 			return bowler;
 		}
 	}
+
+	public static<T> T[] readSortedByStrikeRateAndAverageBowler(String fileName, Class clas) {
+		Logger logger = LogManager.getLogger(LoaderClass.class);
+		Reader reader = null;
+		List<T> listOfObjects = null;
+		T[] bowler = null;
+		try {
+			reader = Files.newBufferedReader(Paths.get(fileName));
+			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
+			listOfObjects = csvToBean.parse();
+			List<Bowler> listOfBowler = (List<Bowler>)listOfObjects;
+			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getAverage));
+			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getSr));
+			Gson gson = new Gson();
+			String json = gson.toJson(listOfBowler);
+			if(clas.equals(Bowler.class))
+				bowler = (T[])gson.fromJson(json, Bowler[].class);
+		} catch (IOException e) {
+			System.out.println("Error while reading file " + e.getMessage());
+		}finally {
+			return bowler;
+		}
+	}
 	
 }

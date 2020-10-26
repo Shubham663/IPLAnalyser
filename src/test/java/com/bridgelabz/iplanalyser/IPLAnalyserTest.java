@@ -83,4 +83,10 @@ public class IPLAnalyserTest
     	Bowler []sortedByStrikeRate5wAnd4W = LoaderClass.readSortedByStrikeRate5WAnd4W("MostWickets.csv",Bowler.class);
     	assertEquals("Alzarri Joseph", sortedByStrikeRate5wAnd4W[0].getName());
     }
+    
+    @Test
+    public void getDataTest_sortedByStrikingRateAndAverage() {
+    	Bowler []sortedByStrikeRateAndAverage = LoaderClass.readSortedByStrikeRateAndAverageBowler("MostWickets.csv",Bowler.class);
+    	assertEquals("Alzarri Joseph", sortedByStrikeRateAndAverage[0].getName());
+    }
 }
