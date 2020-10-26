@@ -131,5 +131,30 @@ public class LoaderClass {
 			return batsmen;
 		}
 	}
+
+	public static<T> T[] readSortedByStrikeRateAndAverage(String fileName, Class clas) {
+		Logger logger = LogManager.getLogger(LoaderClass.class);
+		Reader reader = null;
+		List<T> listOfObjects = null;
+		T[] batsmen = null;
+		try {
+			reader = Files.newBufferedReader(Paths.get(fileName));
+			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
+			listOfObjects = csvToBean.parse();
+			List<Batsman> listOfBatsman = (List<Batsman>)listOfObjects;
+			Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getAverage));
+			Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getStrikeRate));
+			Collections.reverse(listOfBatsman);
+			System.out.println(listOfBatsman);
+			Gson gson = new Gson();
+			String json = gson.toJson(listOfBatsman);
+			if(clas.equals(Batsman.class))
+				batsmen = (T[])gson.fromJson(json, Batsman[].class);
+		} catch (IOException e) {
+			System.out.println("Error while reading file " + e.getMessage());
+		}finally {
+			return batsmen;
+		}
+	}
 	
 }
