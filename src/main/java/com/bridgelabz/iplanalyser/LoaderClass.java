@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -235,6 +236,29 @@ public class LoaderClass {
 			listOfObjects = csvToBean.parse();
 			List<Bowler> listOfBowler = (List<Bowler>)listOfObjects;
 			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getEconomy));
+			Gson gson = new Gson();
+			String json = gson.toJson(listOfBowler);
+			if(clas.equals(Bowler.class))
+				bowler = (T[])gson.fromJson(json, Bowler[].class);
+		} catch (IOException e) {
+			System.out.println("Error while reading file " + e.getMessage());
+		}finally {
+			return bowler;
+		}
+	}
+
+	public static<T> T[] readSortedByStrikeRate5WAnd4W(String fileName, Class clas) {
+		Logger logger = LogManager.getLogger(LoaderClass.class);
+		Reader reader = null;
+		List<T> listOfObjects = null;
+		T[] bowler = null;
+		try {
+			reader = Files.newBufferedReader(Paths.get(fileName));
+			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
+			listOfObjects = csvToBean.parse();
+			List<Bowler> listOfBowler = (List<Bowler>)listOfObjects;
+			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getSr));
+			listOfBowler = listOfBowler.stream().filter(t -> {return t.getFiveWickets() > 0 || t.getFourWickets() > 0;}).collect(Collectors.toList());
 			Gson gson = new Gson();
 			String json = gson.toJson(listOfBowler);
 			if(clas.equals(Bowler.class))
