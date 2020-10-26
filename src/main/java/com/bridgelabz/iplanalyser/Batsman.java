@@ -189,6 +189,13 @@ public class Batsman {
 	public void setSixes(int sixes) {
 		this.sixes = sixes;
 	}
+	/**
+	 * @return the sixes
+	 */
+	public int getFoursAndSixes() {
+		return sixes+fours;
+	}
+	
 	@Override
 	public String toString() {
 		return "Batsman [name=" + name + ", matches=" + matches + ", innings=" + innings + ", notOut=" + notOut
