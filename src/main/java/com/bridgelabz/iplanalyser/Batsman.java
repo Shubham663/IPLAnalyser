@@ -20,7 +20,7 @@ public class Batsman {
 	@CsvBindByName(column = "HS")
 	private String highestScore;
 	@CsvBindByName(column = "Avg")
-	private String average;
+	private double average;
 	@CsvBindByName(column = "BF")
 	private int bF;
 	@CsvBindByName(column = "SR")
@@ -108,13 +108,13 @@ public class Batsman {
 	/**
 	 * @return the average
 	 */
-	public String getAverage() {
+	public double getAverage() {
 		return average;
 	}
 	/**
 	 * @param average the average to set
 	 */
-	public void setAverage(String average) {
+	public void setAverage(double average) {
 		this.average = average;
 	}
 	/**
