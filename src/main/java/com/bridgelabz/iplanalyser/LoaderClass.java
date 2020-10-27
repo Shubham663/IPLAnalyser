@@ -317,5 +317,42 @@ public class LoaderClass {
 			return bowler;
 		}
 	}
+
+	public static<T> T readSortedByAverageBowlingAndBatting(String fileName, Class clas, String fileName2, Class clas2) {
+		Logger logger = LogManager.getLogger(LoaderClass.class);
+		Reader reader = null;
+		Reader reader2 = null;
+		List<T> listOfObjects = null;
+		T[] batsman = null;
+		try {
+			reader = Files.newBufferedReader(Paths.get(fileName));
+			reader2 = Files.newBufferedReader(Paths.get(fileName2));
+			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
+			listOfObjects = csvToBean.parse();
+			List<Bowler> listOfBowler = (List<Bowler>)listOfObjects;
+			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getAverage));
+			CsvToBean csvToBean2 =  new CsvToBeanBuilder<>(reader2).withType(clas2).build();
+			listOfObjects = csvToBean2.parse();
+			List<Batsman> listOfBatsman = (List<Batsman>)listOfObjects;
+			Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getAverage));
+			Collections.reverse(listOfBatsman);
+			listOfBatsman = listOfBatsman.stream().filter(s -> {
+				for(int i=0;i<listOfBowler.size();i++) {
+					String name = listOfBowler.get(i).getName();
+					if(name.equals(s.getName()))
+						return true;
+				}
+				return false;
+			}).collect(Collectors.toList());
+			Gson gson = new Gson();
+			String json = gson.toJson(listOfBatsman);
+			if(clas2.equals(Batsman.class))
+				batsman = (T[])gson.fromJson(json, Batsman[].class);
+		} catch (IOException e) {
+			System.out.println("Error while reading file " + e.getMessage());
+		}finally {
+			return batsman[0];
+		}
+	}
 	
 }

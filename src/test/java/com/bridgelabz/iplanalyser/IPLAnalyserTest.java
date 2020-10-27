@@ -95,4 +95,10 @@ public class IPLAnalyserTest
     	Bowler []sortedByAverageAndMostWickets = LoaderClass.readSortedByAverageAndMostWickets("MostWickets.csv",Bowler.class);
     	assertEquals("Imran Tahir", sortedByAverageAndMostWickets[0].getName());
     }
+    
+    @Test
+    public void getDataTest_sortedByAverageBowlingAndBatting() {
+    	Batsman bestAverageBowlingAndBatting = LoaderClass.readSortedByAverageBowlingAndBatting("MostWickets.csv",Bowler.class,"MostRuns.csv",Batsman.class);
+    	assertEquals("Andre Russell", bestAverageBowlingAndBatting.getName());
+    }
 }
