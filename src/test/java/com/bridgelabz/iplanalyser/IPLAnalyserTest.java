@@ -107,4 +107,10 @@ public class IPLAnalyserTest
     	Batsman bestAllRounder = LoaderClass.readBestAllRounder("MostWickets.csv",Bowler.class,"MostRuns.csv",Batsman.class);
     	assertEquals("Andre Russell", bestAllRounder.getName());
     }
+
+    @Test
+    public void getDataTest_BestAverageAndMaxHundreds() {
+    	Batsman bestAverageAndMaxHundreds[] = LoaderClass.readBestAverageAndMaxHundreds("MostRuns.csv",Batsman.class);
+    	assertEquals("David Warner", bestAverageAndMaxHundreds[0].getName());
+    }
 }
