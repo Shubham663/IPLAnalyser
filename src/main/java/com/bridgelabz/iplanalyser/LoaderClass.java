@@ -12,9 +12,6 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.bridgelabz.csvreader.CSVBuilderFactory;
-import com.bridgelabz.csvreader.CustomException;
-import com.bridgelabz.csvreader.ICSVBuilder;
 import com.google.gson.Gson;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -27,35 +24,25 @@ public class LoaderClass {
 
 	public static<T> int readRecords(String fileName,Class clas){
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
-		List<T> listOfBatsman = null;
+		List<T> listOfObjects = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfBatsman = csvToBean.parse();
+			listOfObjects = getListOfObjects(fileName,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}
 		
-		return listOfBatsman.size();
+		return listOfObjects.size();
 	}
 
 	public static<T> T[] readSortedByAvg(String fileName,Class clas) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
 		List<T> listOfObjects = null;
 		T[] batsmen = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Batsman> listOfBatsman = (List<Batsman>)listOfObjects;
-			Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getAverage));
+			listOfObjects = getListOfObjects(fileName,clas);
+			List<Batsman> listOfBatsman = (List<Batsman>)sort(listOfObjects,Batsman.class,"Average");
 			Collections.reverse(listOfBatsman);
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBatsman);
-			if(clas.equals(Batsman.class))
-				batsmen = (T[])gson.fromJson(json, Batsman[].class);
+			batsmen = (T[])getGenericArray(listOfBatsman,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
@@ -65,20 +52,13 @@ public class LoaderClass {
 
 	public static<T> T[] readSortedByStrikeRate(String fileName, Class clas) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
 		List<T> listOfObjects = null;
 		T[] batsmen = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Batsman> listOfBatsman = (List<Batsman>)listOfObjects;
-			Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getStrikeRate));
+			listOfObjects = getListOfObjects(fileName,clas);
+			List<Batsman> listOfBatsman = (List<Batsman>)sort(listOfObjects,Batsman.class,"Strike Rate");
 			Collections.reverse(listOfBatsman);
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBatsman);
-			if(clas.equals(Batsman.class))
-				batsmen = (T[])gson.fromJson(json, Batsman[].class);
+			batsmen = (T[])getGenericArray(listOfBatsman,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
@@ -88,20 +68,13 @@ public class LoaderClass {
 
 	public static<T> T[] readSortedBy6sAnd4s(String fileName, Class clas) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
 		List<T> listOfObjects = null;
 		T[] batsmen = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Batsman> listOfBatsman = (List<Batsman>)listOfObjects;
-			Collections.sort(listOfBatsman,Comparator.comparingInt(Batsman::getFoursAndSixes));
+			listOfObjects = getListOfObjects(fileName,clas);
+			List<Batsman> listOfBatsman = (List<Batsman>)sort(listOfObjects,Batsman.class,"Sixes And Fours");
 			Collections.reverse(listOfBatsman);
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBatsman);
-			if(clas.equals(Batsman.class))
-				batsmen = (T[])gson.fromJson(json, Batsman[].class);
+			batsmen = (T[])getGenericArray(listOfBatsman,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
@@ -111,21 +84,14 @@ public class LoaderClass {
 
 	public static<T> T[] readSortedBy6sAnd4sAndStrikeRate(String fileName, Class clas) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
 		List<T> listOfObjects = null;
 		T[] batsmen = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Batsman> listOfBatsman = (List<Batsman>)listOfObjects;
-			Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getStrikeRate));
-			Collections.sort(listOfBatsman,Comparator.comparingInt(Batsman::getFoursAndSixes));
+			listOfObjects = getListOfObjects(fileName,clas);
+			List<Batsman> listOfBatsman = (List<Batsman>)sort(listOfObjects,Batsman.class,"Strike Rate");
+			listOfBatsman = (List<Batsman>)sort(listOfObjects,Batsman.class,"Sixes And Fours");
 			Collections.reverse(listOfBatsman);
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBatsman);
-			if(clas.equals(Batsman.class))
-				batsmen = (T[])gson.fromJson(json, Batsman[].class);
+			batsmen = (T[])getGenericArray(listOfBatsman,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
@@ -135,21 +101,14 @@ public class LoaderClass {
 
 	public static<T> T[] readSortedByStrikeRateAndAverage(String fileName, Class clas) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
 		List<T> listOfObjects = null;
 		T[] batsmen = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Batsman> listOfBatsman = (List<Batsman>)listOfObjects;
-			Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getAverage));
-			Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getStrikeRate));
+			listOfObjects = getListOfObjects(fileName,clas);
+			List<Batsman> listOfBatsman = (List<Batsman>)sort(listOfObjects,Batsman.class,"Average");
+			listOfBatsman = (List<Batsman>)sort(listOfObjects,Batsman.class,"Strike Rate");
 			Collections.reverse(listOfBatsman);
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBatsman);
-			if(clas.equals(Batsman.class))
-				batsmen = (T[])gson.fromJson(json, Batsman[].class);
+			batsmen = (T[])getGenericArray(listOfBatsman,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
@@ -159,21 +118,14 @@ public class LoaderClass {
 
 	public static<T> T[] readSortedByMaxRunsAndAverage(String fileName, Class clas) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
 		List<T> listOfObjects = null;
 		T[] batsmen = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Batsman> listOfBatsman = (List<Batsman>)listOfObjects;
-			Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getAverage));
-			Collections.sort(listOfBatsman,Comparator.comparingInt(Batsman::getRuns));
+			listOfObjects = getListOfObjects(fileName,clas);
+			List<Batsman> listOfBatsman = (List<Batsman>)sort(listOfObjects,Batsman.class,"Average");
+			listOfBatsman = (List<Batsman>)sort(listOfObjects,Batsman.class,"Runs");
 			Collections.reverse(listOfBatsman);
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBatsman);
-			if(clas.equals(Batsman.class))
-				batsmen = (T[])gson.fromJson(json, Batsman[].class);
+			batsmen = (T[])getGenericArray(listOfBatsman,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
@@ -183,19 +135,12 @@ public class LoaderClass {
 
 	public static<T> T[] readSortedByBowlerAverage(String fileName, Class clas) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
 		List<T> listOfObjects = null;
 		T[] bowler = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Bowler> listOfBowler = (List<Bowler>)listOfObjects;
-			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getAverage));
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBowler);
-			if(clas.equals(Bowler.class))
-				bowler = (T[])gson.fromJson(json, Bowler[].class);
+			listOfObjects = getListOfObjects(fileName,clas);
+			List<Bowler> listOfBowler = (List<Bowler>)sort(listOfObjects,Bowler.class,"Average");
+			bowler = (T[])getGenericArray(listOfBowler,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
@@ -205,19 +150,12 @@ public class LoaderClass {
 
 	public static<T> T[] readSortedByBowlerStrikingRate(String fileName, Class clas) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
 		List<T> listOfObjects = null;
 		T[] bowler = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Bowler> listOfBowler = (List<Bowler>)listOfObjects;
-			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getSr));
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBowler);
-			if(clas.equals(Bowler.class))
-				bowler = (T[])gson.fromJson(json, Bowler[].class);
+			listOfObjects = getListOfObjects(fileName,clas);
+			List<Bowler> listOfBowler = (List<Bowler>)sort(listOfObjects,Bowler.class,"Strike Rate");
+			bowler = (T[])getGenericArray(listOfBowler,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
@@ -227,19 +165,12 @@ public class LoaderClass {
 
 	public static<T> T[] readSortedByBowlerEconomy(String fileName, Class clas) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
 		List<T> listOfObjects = null;
 		T[] bowler = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Bowler> listOfBowler = (List<Bowler>)listOfObjects;
-			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getEconomy));
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBowler);
-			if(clas.equals(Bowler.class))
-				bowler = (T[])gson.fromJson(json, Bowler[].class);
+			listOfObjects = getListOfObjects(fileName,clas);
+			List<Bowler> listOfBowler = (List<Bowler>)sort(listOfObjects,Bowler.class,"Economy");
+			bowler = (T[])getGenericArray(listOfBowler,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
@@ -249,20 +180,13 @@ public class LoaderClass {
 
 	public static<T> T[] readSortedByStrikeRate5WAnd4W(String fileName, Class clas) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
 		List<T> listOfObjects = null;
 		T[] bowler = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Bowler> listOfBowler = (List<Bowler>)listOfObjects;
-			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getSr));
+			listOfObjects = getListOfObjects(fileName,clas);
+			List<Bowler> listOfBowler = (List<Bowler>)sort(listOfObjects,Bowler.class,"Strike Rate");
 			listOfBowler = listOfBowler.stream().filter(t -> {return t.getFiveWickets() > 0 || t.getFourWickets() > 0;}).collect(Collectors.toList());
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBowler);
-			if(clas.equals(Bowler.class))
-				bowler = (T[])gson.fromJson(json, Bowler[].class);
+			bowler = (T[])getGenericArray(listOfBowler,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
@@ -272,20 +196,13 @@ public class LoaderClass {
 
 	public static<T> T[] readSortedByStrikeRateAndAverageBowler(String fileName, Class clas) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
 		List<T> listOfObjects = null;
 		T[] bowler = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Bowler> listOfBowler = (List<Bowler>)listOfObjects;
-			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getAverage));
-			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getSr));
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBowler);
-			if(clas.equals(Bowler.class))
-				bowler = (T[])gson.fromJson(json, Bowler[].class);
+			listOfObjects = getListOfObjects(fileName,clas);
+			List<Bowler> listOfBowler = (List<Bowler>)sort(listOfObjects,Bowler.class,"Average");
+			listOfBowler = (List<Bowler>)sort(listOfObjects,Bowler.class,"Strike Rate");
+			bowler = (T[])getGenericArray(listOfBowler,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
@@ -295,22 +212,15 @@ public class LoaderClass {
 
 	public static<T> T[] readSortedByAverageAndMostWickets(String fileName, Class clas) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
 		List<T> listOfObjects = null;
 		T[] bowler = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Bowler> listOfBowler = (List<Bowler>)listOfObjects;
-			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getAverage));
+			listOfObjects = getListOfObjects(fileName,clas);
+			List<Bowler> listOfBowler = (List<Bowler>)sort(listOfObjects,Bowler.class,"Average");
 			Collections.reverse(listOfBowler);
-			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getWickets));
+			listOfBowler = (List<Bowler>)sort(listOfObjects,Bowler.class,"Wickets");
 			Collections.reverse(listOfBowler);
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBowler);
-			if(clas.equals(Bowler.class))
-				bowler = (T[])gson.fromJson(json, Bowler[].class);
+			bowler = (T[])getGenericArray(listOfBowler,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
@@ -318,23 +228,17 @@ public class LoaderClass {
 		}
 	}
 
-	public static<T> T readSortedByAverageBowlingAndBatting(String fileName, Class clas, String fileName2, Class clas2) {
+	public static<T,Y> T readSortedByAverageBowlingAndBatting(String fileName, Class clas, String fileName2, Class clas2) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
-		Reader reader2 = null;
 		List<T> listOfObjects = null;
+		List<Y> listOfObjects2 = null;
 		T[] batsman = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			reader2 = Files.newBufferedReader(Paths.get(fileName2));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Bowler> listOfBowler = (List<Bowler>)listOfObjects;
-			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getAverage));
-			CsvToBean csvToBean2 =  new CsvToBeanBuilder<>(reader2).withType(clas2).build();
-			listOfObjects = csvToBean2.parse();
-			List<Batsman> listOfBatsman = (List<Batsman>)listOfObjects;
-			Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getAverage));
+			listOfObjects2 = getListOfObjects(fileName,clas);
+			List<Bowler> listOfBowler = (List<Bowler>)sort(listOfObjects2,Bowler.class,"Average");
+			Collections.reverse(listOfBowler);
+			listOfObjects = getListOfObjects(fileName2,clas2);
+			List<Batsman> listOfBatsman = (List<Batsman>)sort(listOfObjects,Batsman.class,"Average");
 			Collections.reverse(listOfBatsman);
 			listOfBatsman = listOfBatsman.stream().filter(s -> {
 				for(int i=0;i<listOfBowler.size();i++) {
@@ -344,36 +248,28 @@ public class LoaderClass {
 				}
 				return false;
 			}).collect(Collectors.toList());
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBatsman);
-			if(clas2.equals(Batsman.class))
-				batsman = (T[])gson.fromJson(json, Batsman[].class);
+			batsman = (T[])getGenericArray(listOfBatsman,clas2);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
+		}catch(Exception e){
+			System.out.println("Error : " + e.getCause());
 		}finally {
 			return batsman[0];
 		}
 	}
 
-	public static<T> T readBestAllRounder(String fileName, Class clas, String fileName2,
+	public static<T,Y> T readBestAllRounder(String fileName, Class clas, String fileName2,
 			Class clas2) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
-		Reader reader2 = null;
 		List<T> listOfObjects = null;
+		List<Y> listOfObjects2 = null;
 		T[] batsman = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			reader2 = Files.newBufferedReader(Paths.get(fileName2));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Bowler> listOfBowler = (List<Bowler>)listOfObjects;
-			Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getWickets));
+			listOfObjects2 = getListOfObjects(fileName,clas);
+			List<Bowler> listOfBowler = (List<Bowler>)sort(listOfObjects2,Bowler.class,"Wickets");
 			Collections.reverse(listOfBowler);
-			CsvToBean csvToBean2 =  new CsvToBeanBuilder<>(reader2).withType(clas2).build();
-			listOfObjects = csvToBean2.parse();
-			List<Batsman> listOfBatsman = (List<Batsman>)listOfObjects;
-			Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getRuns));
+			listOfObjects = getListOfObjects(fileName2,clas2);
+			List<Batsman> listOfBatsman = (List<Batsman>)sort(listOfObjects,Batsman.class,"Runs");
 			Collections.reverse(listOfBatsman);
 			listOfBatsman = listOfBatsman.stream().filter(s -> {
 				for(int i=0;i<listOfBowler.size();i++) {
@@ -383,10 +279,7 @@ public class LoaderClass {
 				}
 				return false;
 			}).collect(Collectors.toList());
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBatsman);
-			if(clas2.equals(Batsman.class))
-				batsman = (T[])gson.fromJson(json, Batsman[].class);
+			batsman = (T[])getGenericArray(listOfBatsman,clas2);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
@@ -400,17 +293,11 @@ public class LoaderClass {
 		List<T> listOfObjects = null;
 		T[] batsmen = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Batsman> listOfBatsman = (List<Batsman>)listOfObjects;
-			Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getAverage));
-			Collections.sort(listOfBatsman,Comparator.comparingInt(Batsman::getHundreds));
+			listOfObjects = getListOfObjects(fileName,clas);
+			List<Batsman> listOfBatsman = (List<Batsman>)sort(listOfObjects,Batsman.class,"Average");
+			listOfBatsman = (List<Batsman>)sort(listOfBatsman,Batsman.class,"Max Hundreds");
 			Collections.reverse(listOfBatsman);
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBatsman);
-			if(clas.equals(Batsman.class))
-				batsmen = (T[])gson.fromJson(json, Batsman[].class);
+			batsmen = (T[])getGenericArray(listOfBatsman,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
@@ -420,26 +307,76 @@ public class LoaderClass {
 
 	public static<T> T[] readBestAverageAndNoHundredsAndNoFifties(String fileName, Class clas) {
 		Logger logger = LogManager.getLogger(LoaderClass.class);
-		Reader reader = null;
 		List<T> listOfObjects = null;
 		T[] batsmen = null;
 		try {
-			reader = Files.newBufferedReader(Paths.get(fileName));
-			CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-			listOfObjects = csvToBean.parse();
-			List<Batsman> listOfBatsman = (List<Batsman>)listOfObjects;
-			Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getAverage));
+			listOfObjects = getListOfObjects(fileName,clas);
+			List<Batsman> listOfBatsman = (List<Batsman>)sort(listOfObjects,Batsman.class,"Average");
 			Collections.reverse(listOfBatsman);
 			listOfBatsman = listOfBatsman.stream().filter(batsman -> batsman.getHundreds() == 0 && batsman.getFifties() == 0).collect(Collectors.toList());
-			Gson gson = new Gson();
-			String json = gson.toJson(listOfBatsman);
-			if(clas.equals(Batsman.class))
-				batsmen = (T[])gson.fromJson(json, Batsman[].class);
+			batsmen = (T[])getGenericArray(listOfBatsman,clas);
 		} catch (IOException e) {
 			System.out.println("Error while reading file " + e.getMessage());
 		}finally {
 			return batsmen;
 		}
+	}
+
+	private static<T> List<T> sort(List<T> listOfObjects, Class clas, String field) {
+		if(clas.equals(Batsman.class)) {
+			List<Batsman> listOfBatsman = (List<Batsman>)listOfObjects;
+			if(field.equals("Average")) {
+				Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getAverage));
+			}
+			else if(field.equals("Max Hundreds")) {
+				Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getHundreds));
+			}
+			else if(field.equals("Runs")) {
+				Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getRuns));
+			}
+			else if(field.equals("Strike Rate")) {
+				Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getStrikeRate));
+			}
+			else if(field.equals("Sixes And Fours")) {
+				Collections.sort(listOfBatsman,Comparator.comparingDouble(Batsman::getFoursAndSixes));
+			}
+			return (List<T>)listOfBatsman;
+		}
+		else if(clas.equals(Bowler.class)) {
+			List<Bowler> listOfBowler = (List<Bowler>)listOfObjects;
+			if(field.equals("Wickets")) {
+				Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getWickets));
+			}
+			else if(field.equals("Average")) {
+				Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getAverage));
+			}
+			else if(field.equals("Strike Rate")) {
+				Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getSr));
+			}
+			else if(field.equals("Economy")) {
+				Collections.sort(listOfBowler,Comparator.comparingDouble(Bowler::getEconomy));
+			}
+			return (List<T>)listOfBowler;
+		}
+		return null;
+	}
+
+	private static<T> T[] getGenericArray(List<T> listOfBatsman, Class clas) {
+		T[] cricketers = null;
+		Gson gson = new Gson();
+		String json = gson.toJson(listOfBatsman);
+		if(clas.equals(Batsman.class))
+			cricketers = (T[])gson.fromJson(json, Batsman[].class);
+		else if(clas.equals(Bowler.class))
+			cricketers = (T[])gson.fromJson(json, Bowler[].class);
+		return cricketers;
+	}
+
+	private static<T> List<T> getListOfObjects(String fileName, Class clas) throws IOException {
+		Reader reader = Files.newBufferedReader(Paths.get(fileName));
+		CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
+		List<T> listOfObjects = csvToBean.parse();
+		return listOfObjects;
 	}
 	
 }
