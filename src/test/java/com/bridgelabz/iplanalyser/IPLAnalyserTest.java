@@ -10,7 +10,7 @@ import org.junit.Test;
 import com.bridgelabz.csvreader.CustomException;
 
 /**
- * Unit test for simple App.
+ * Unit test for simple IPLAnalyser.
  */
 public class IPLAnalyserTest 
 {
