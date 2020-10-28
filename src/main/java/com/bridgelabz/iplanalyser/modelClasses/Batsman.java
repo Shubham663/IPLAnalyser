@@ -1,4 +1,4 @@
-package com.bridgelabz.iplanalyser;
+package com.bridgelabz.iplanalyser.modelClasses;
 
 import com.opencsv.bean.CsvBindByName;
 

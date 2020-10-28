@@ -1,4 +1,4 @@
-package com.bridgelabz.iplanalyser;
+package com.bridgelabz.iplanalyser.serviceClass;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -12,6 +12,10 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.bridgelabz.iplanalyser.interfacing.CSVBuilderFactory;
+import com.bridgelabz.iplanalyser.interfacing.ICSVBuilder;
+import com.bridgelabz.iplanalyser.modelClasses.Batsman;
+import com.bridgelabz.iplanalyser.modelClasses.Bowler;
 import com.google.gson.Gson;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -373,9 +377,8 @@ public class LoaderClass {
 	}
 
 	private static<T> List<T> getListOfObjects(String fileName, Class clas) throws IOException {
-		Reader reader = Files.newBufferedReader(Paths.get(fileName));
-		CsvToBean csvToBean =  new CsvToBeanBuilder<>(reader).withType(clas).build();
-		List<T> listOfObjects = csvToBean.parse();
+		ICSVBuilder icsvFileBuilder = CSVBuilderFactory.getBuilder();
+		List<T> listOfObjects = icsvFileBuilder.getList(fileName, clas);
 		return listOfObjects;
 	}
 	
